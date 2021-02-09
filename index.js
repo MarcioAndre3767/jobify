@@ -85,12 +85,6 @@ app.post('/admin/vagas/editar/:id', async(req, res) => {
 })
 
 
-// video 1h35
-
-
-
-
-
 const init = async() => {
     const db = await dbConnection
     await db.run('create table if not exists categorias (id INTEGER PRIMARY KEY, categoria TEXT);')
@@ -119,6 +113,7 @@ const init = async() => {
 }
 init()
 
+//comment
 
 app.listen( 3000, ( err ) => {
     if ( err ) {
