@@ -1,19 +1,22 @@
 const { request, response } = require('express')
 const express = require( 'express' )
-const app = express()         //importei o express e chamei ele no 'app' como uma função
-const bodyParser = require('body-parser')  //importei o body-parser
+const app = express()         
+const bodyParser = require('body-parser')  
 
-// conexão com o banco de dados('sqlite')
+
 const sqlite = require('sqlite')
 const dbConnection = sqlite.open('banco.sqlite', {Promise});
 
 
-app.set('view engine', 'ejs') // template ejs
+const port = process.env.PORT || 3000
+
+
+app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
 app.use(bodyParser.urlencoded( { extended: true } ))
 
-// pagina inicial
+
 app.get('/', async( request, response ) => {  
     const db = await dbConnection
     const categoriasDb = await db.all( 'select * from categorias;' )
@@ -30,7 +33,6 @@ app.get('/', async( request, response ) => {
 })
 
 
-// vaga
 app.get('/vaga/:id', async( request, response ) => {  
     const db = await dbConnection
     const vaga = await db.get('select * from vagas where id = '+request.params.id)
@@ -88,34 +90,12 @@ app.post('/admin/vagas/editar/:id', async(req, res) => {
 const init = async() => {
     const db = await dbConnection
     await db.run('create table if not exists categorias (id INTEGER PRIMARY KEY, categoria TEXT);')
-    await db.run('create table if not exists vagas (id INTEGER PRIMARY KEY, categoria INTEGER, titulo TEXT, descricao TEXT);')
-
-   
-    
-    // const categoria = 'Engineering team'
-    // await db.run(`insert into categorias(categoria) values('${categoria}')`)
-
-    // const categoria = 'Marketing team'
-    // await db.run(`insert into categorias(categoria) values('${categoria}')`)
-
-    // const vaga = 'Fullstack Developer (Remote)'
-    // const descricao = 'Vaga para fullstack developer que tem nível superior'
-    // await db.run(`insert into vagas(categoria, titulo, descricao) values(1, '${vaga}', '${descricao}' )`)
-
-    // const vaga = 'Marketing Digital (San Francisco)'
-    // const descricao = 'Vaga para Marketing Digital para morar em San Francisco'
-    // await db.run(`insert into vagas(categoria, titulo, descricao) values(2, '${vaga}', '${descricao}' )`)
-
-    // const vaga = 'Social Media (online)'
-    // const descricao = 'Vaga para Social Media - 4 horas por dia - online'
-    // await db.run(`insert into vagas(categoria, titulo, descricao) values(2, '${vaga}', '${descricao}' )`)
-
+    await db.run('create table if not exists vagas (id INTEGER PRIMARY KEY, categoria INTEGER, titulo TEXT, descricao TEXT);')  
 }
 init()
 
-//comment
 
-app.listen( 3000, ( err ) => {
+app.listen( port, ( err ) => {
     if ( err ) {
         console.log('Não foi possível iniciar o servidor do Jobify.')
     } else {
